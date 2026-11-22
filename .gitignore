@@ -1,0 +1,10 @@
+*.bak
+*.devbak
+*.zip
+data.json*
+__pycache__/
+src/
+loader/
+dist/
+_data-backups/
+TODO.md
