@@ -8,3 +8,7 @@ loader/
 dist/
 _data-backups/
 TODO.md
+stats-worker/
+.secrets/
+bak/
+promo/
