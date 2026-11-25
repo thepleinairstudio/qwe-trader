@@ -1,4 +1,4 @@
-script_version('1.22.0')
+script_version('1.23.0')
 -- QWE Trader -- loader (open part).
 -- This file contains NO trader logic. All trader code lives in qwe_core.dat
 -- (LuaJIT bytecode), so it cannot be read or edited by players.
