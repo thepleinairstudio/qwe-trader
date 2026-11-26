@@ -43,7 +43,9 @@ function UPD.check(manual, curVer)
 	downloadUrlToFile(REPO_RAW .. 'version.json?t=' .. os.time(), TMPJ, function(_, status)
 		if status ~= dlstatus.STATUS_ENDDOWNLOADDATA then return end
 		local s = readFile(TMPJ); os.remove(TMPJ)
-		local ok, j = pcall(decodeJson, s or '')
+		-- decodeJson('') throws past pcall in MoonLoader: check that it is JSON at all
+		if not s or not s:find('{', 1, true) then UPD.busy = false; setStatus('neterr', curVer); return end
+		local ok, j = pcall(decodeJson, s)
 		if not ok or type(j) ~= 'table' or not j.version then
 			UPD.busy = false; setStatus('neterr', curVer); return
 		end
@@ -52,6 +54,10 @@ function UPD.check(manual, curVer)
 		end
 		setStatus('updating', j.version)
 		local coreName = j.core or 'moonloader/qwe_core.dat'
+		-- the second download must not start inside the first one's callback: moonloader fails
+		-- with "device or resource busy" (auto-update never finished). Start it from a thread.
+		lua_thread.create(function()
+		wait(200)
 		downloadUrlToFile(REPO_RAW .. coreName .. '?t=' .. os.time(), TMPD, function(_, st2)
 			if st2 ~= dlstatus.STATUS_ENDDOWNLOADDATA then return end
 			local bc = readFile(TMPD)
@@ -65,7 +71,8 @@ function UPD.check(manual, curVer)
 			os.remove(TMPD)
 			if not okw then UPD.busy = false; setStatus('writeerr', j.version); return end
 			setStatus('updated', j.version); UPD.busy = false
-			thisScript():reload()
+			lua_thread.create(function() wait(100); thisScript():reload() end)
+		end)
 		end)
 	end)
 end
