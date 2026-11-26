@@ -1,6 +1,6 @@
 {
-  "version": "1.23.0",
-  "date": "26.11.2026",
+  "version": "1.24.0",
+  "date": "27.11.2026",
   "file": "moonloader/qwe_trade.lua",
   "core": "moonloader/qwe_core.dat"
 }
